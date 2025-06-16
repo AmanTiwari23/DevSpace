@@ -4,12 +4,13 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon src/app.js",
-    "start":"node src/app.js"
+    "start": "node src/app.js"
   },
   "author": "Aman Tiwari",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "mongoose": "^8.15.2"
   }
 }
