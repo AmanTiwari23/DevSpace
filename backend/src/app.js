@@ -20,6 +20,53 @@ try{
  
 });
 
+app.get("/user", async (req,res)=>{
+
+  const useremail = req.body.emailId;
+  console.log(useremail);
+  try{
+
+    const users = await User.find({emailId:useremail});
+
+    if(user.length ==0){
+      res.status(404).send("user not found");
+    }else{
+      res.send(users);
+    }
+
+  }catch(err){
+    res.status(400).send("something went wrong");
+  }
+
+});
+
+app.get("/feed",async (req,res)=>{
+    
+  
+  try{
+    const users = await User.find({});
+     res.send(users);
+
+  }catch(err){
+
+    res.status(400).send("something went wrong");
+
+  }
+
+});
+
+app.delete("/user", async (req,res)=>{
+    const userId = req.body.userId;
+
+    try{
+        const user = await User.findByIdAndDelete(userId);
+        
+        res.send("user deleted successfully");
+    }catch(err){
+        res.status(400).send("something went wrong");
+    }
+});
+
 connectDB()
   .then(() => {
     console.log("database connection established...");
