@@ -64,7 +64,19 @@ app.delete("/user", async (req,res)=>{
         res.send("user deleted successfully");
     }catch(err){
         res.status(400).send("something went wrong");
-    }
+    } 
+});
+
+app.patch("/user",async (req,res)=>{
+  const userId = req.body.userId;
+  const data = req.body;
+  try{
+    await User.findByIdAndUpdate({id: userId},data);
+    res.status(400).send("user updated");
+  }catch(err){
+   res.status(400).send("some thing wrong")
+
+  }
 });
 
 connectDB()
