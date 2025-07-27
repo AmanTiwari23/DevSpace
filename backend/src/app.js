@@ -13,7 +13,7 @@ app.post("/signup", async (req, res) => {
     await user.save();
     res.send("User added success fully");
   } catch (err) {
-    res.status(400).send("Error saving data" + err.massage);
+    res.status(400).send("Error saving data :" +err );
   }
 });
 
@@ -28,7 +28,7 @@ app.get("/user", async (req, res) => {
     } else {
       res.send(users);
     }
-  } catch (err) {
+  } catch (err) { 
     res.status(400).send("something went wrong");
   }
 });
