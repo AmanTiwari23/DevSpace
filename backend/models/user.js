@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const validator = require("validator");
 
 const userSchema = new mongoose.Schema(
   {
@@ -30,7 +31,7 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
       validate(value) {
-        if (!value.endsWith("@gmail.com")) {
+        if (!validator.isEmail(value)) {
           throw new Error("not a valid email");
         }
       },
@@ -40,6 +41,11 @@ const userSchema = new mongoose.Schema(
       required: true,
       minLength: 4,
       maxLength: 10,
+      validate(value){
+        if(!validator.isStrongPassword(value)){
+          throw new Error("Enter a strong password");
+        }
+      }
     },
     age: {
       type: Number,
@@ -61,6 +67,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       default:
         "https://t4.ftcdn.net/jpg/02/29/75/83/360_F_229758328_7x8jwCwjtBMmC6rgFzLFhZoEpLobB6L8.jpg",
+        validate(value){
+          if(!validator.isURL(value)){
+            throw new Error("enter valid url");
+          }
+        }
     },
     about: {
       type: String,
