@@ -9,9 +9,10 @@ app.use(express.json());
 app.post("/signup", async (req, res) => {
   console.log(req.body);
   const user = new User(req.body);
+
   try {
     const Allow_user = []
-    if(data?.skills.length>10){
+    if(user?.skills.length>10){
       throw new Error("Skills can not be more than 10");
     }
     await user.save();
