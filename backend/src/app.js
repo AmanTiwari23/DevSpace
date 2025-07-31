@@ -1,25 +1,36 @@
 const express = require("express");
 const connectDB = require("./config/database");
 const User = require("../models/user");
+const { validateSignupData } = require("./utils/validation");
+const bcrypt = require("bcrypt");
 
 const app = express();
 
 app.use(express.json());
 
 app.post("/signup", async (req, res) => {
-  console.log(req.body);
-  const user = new User(req.body);
+try{
+  // validation of data
+  validateSignupData(req);
 
-  try {
-    const Allow_user = []
-    if(user?.skills.length>10){
-      throw new Error("Skills can not be more than 10");
-    }
-    await user.save();
-    res.send("User added success fully");
-  } catch (err) {
-    res.status(400).send("Error saving data :" + err);
-  }
+  const {password,firstName,lastName,emailId} = req.body;
+// encrypt the password
+  const hashPassword = await bcrypt.hash(password,10)
+  console.log(hashPassword);
+
+  // creating a new instance of the user model
+  const user =new User({
+    firstName,
+    lastName,
+    emailId,
+    password:hashPassword
+  });
+  await user.save();
+  res.send("user Added successfully");
+   
+}catch(err){
+    res.status(400).send("ERROR : "+ err.message);
+}
 });
 
 app.get("/user", async (req, res) => {

@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       minLength: 4,
-      maxLength: 10,
+      
       validate(value){
         if(!validator.isStrongPassword(value)){
           throw new Error("Enter a strong password");
@@ -71,7 +71,7 @@ const userSchema = new mongoose.Schema(
           if(!validator.isURL(value)){
             throw new Error("enter valid url");
           }
-        }
+        } 
     },
     about: {
       type: String,
