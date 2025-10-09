@@ -3,10 +3,14 @@ const connectDB = require("./config/database");
 const User = require("../models/user");
 const { validateSignupData } = require("./utils/validation");
 const bcrypt = require("bcrypt");
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 
 const app = express();
 
+
 app.use(express.json());
+app.use(cookieParser());
 
 app.post("/signup", async (req, res) => {
 try{
@@ -44,6 +48,13 @@ app.post("/login", async (req,res)=>{
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if(isPasswordValid){
+
+      //create jwt token 
+
+      const token = await jwt.sign({_id:user._id},"Aman@9589");
+
+      res.cookie("token",token);
+
       res.send("login successful!!!!");
     }else{
       throw new Error("Invalid credentials");
@@ -53,6 +64,34 @@ app.post("/login", async (req,res)=>{
     res.status(400).send("ERROR: invalid credentials");
   }
 })
+
+app.get("/profile", async(req,res)=>{
+    try{
+   const cookies = req.cookies;
+   const {token} = cookies;
+
+   if(!token){
+    throw new Error("Invalid Token");
+   };
+
+   const decodedMessage = await jwt.verify(token,"Aman@9589");
+
+   const {_id} = decodedMessage;
+
+   const user = await User.findById(_id);
+   if(!user){
+    throw new Error("User does not exist");
+   }
+   res.send(user);
+
+    }catch(err){
+      res.status(400).send("ERROR : " + err.message);
+    }
+});
+
+
+
+
 
 app.get("/user", async (req, res) => {
   const useremail = req.body.emailId;
