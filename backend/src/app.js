@@ -5,6 +5,7 @@ const { validateSignupData } = require("./utils/validation");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
+const {userAuth} = require("./middlewares/auth")
 
 const app = express();
 
@@ -65,96 +66,17 @@ app.post("/login", async (req,res)=>{
   }
 })
 
-app.get("/profile", async(req,res)=>{
+app.get("/profile", userAuth, async(req,res)=>{
     try{
-   const cookies = req.cookies;
-   const {token} = cookies;
+     const user = req.user
 
-   if(!token){
-    throw new Error("Invalid Token");
-   };
-
-   const decodedMessage = await jwt.verify(token,"Aman@9589");
-
-   const {_id} = decodedMessage;
-
-   const user = await User.findById(_id);
-   if(!user){
-    throw new Error("User does not exist");
-   }
-   res.send(user);
+     res.send(user);
 
     }catch(err){
       res.status(400).send("ERROR : " + err.message);
     }
 });
 
-
-
-
-
-app.get("/user", async (req, res) => {
-  const useremail = req.body.emailId;
-  console.log(useremail);
-  try {
-    const users = await User.find({ emailId: useremail });
-
-    if (user.length == 0) {
-      res.status(404).send("user not found");
-    } else {
-      res.send(users);
-    }
-  } catch (err) {
-    res.status(400).send("something went wrong");
-  }
-});
-
-app.get("/feed", async (req, res) => {
-  try {
-    const users = await User.find({});
-    res.send(users);
-  } catch (err) {
-    res.status(400).send("something went wrong");
-  }
-});
-
-app.delete("/user", async (req, res) => {
-  const userId = req.body.userId;
-
-  try {
-    const user = await User.findByIdAndDelete(userId);
-
-    res.send("user deleted successfully");
-  } catch (err) {
-    res.status(400).send("something went wrong");
-  }
-});
-
-app.patch("/user", async (req, res) => {
-  const userId = req.body.userId;
-  const data = req.body;
-
-  try {
-    const ALLOWED_UPDATES = ["photoUrl", "about", "age", "skills"];
-    const isUpdateAllowed = Object.keys(data).every((k) =>
-      ALLOWED_UPDATES.includes(k)
-    );
-    if(!isUpdateAllowed){
-      throw new Error("update not allowed");
-    }
-    if(data?.skills.length>10){
-      throw new Error("Skills can not be more than 10");
-    }
-    const user = await User.findByIdAndUpdate({ _id: userId }, data, {
-      returnDocument: "after",
-      runValidators: true,
-    });
-    console.log(user);
-    res.send("user updated");
-  } catch (err) {
-    res.status(400).send("some thing wrong :" + err.message);
-  }
-});
 
 connectDB()
   .then(() => {
