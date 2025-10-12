@@ -46,15 +46,16 @@ app.post("/login", async (req,res)=>{
     if(!user){
       throw new Error("Invalid credentials");
     }
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-
+    const isPasswordValid = await user.validatePassword(password);
     if(isPasswordValid){
 
       //create jwt token 
 
-      const token = await jwt.sign({_id:user._id},"Aman@9589");
+      const token = await user.getJWT();
 
-      res.cookie("token",token);
+      res.cookie("token",token,{
+        expires:new Date(Date.now()+ 1*3600000)
+      });
 
       res.send("login successful!!!!");
     }else{
@@ -76,6 +77,13 @@ app.get("/profile", userAuth, async(req,res)=>{
       res.status(400).send("ERROR : " + err.message);
     }
 });
+
+app.post("/sendConnectionRequest", userAuth, async (req,res)=>{
+  const user = req.user;
+  console.log("sending connection request");
+  res.send(user.firstName + " is Sending connection request");
+   
+})
 
 
 connectDB()
