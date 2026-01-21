@@ -43,11 +43,11 @@ const userSchema = new mongoose.Schema(
       required: true,
       minLength: 4,
       
-      validate(value){
-        if(!validator.isStrongPassword(value)){
-          throw new Error("Enter a strong password");
-        }
-      }
+      // validate(value){
+      //   if(!validator.isStrongPassword(value)){
+      //     throw new Error("Enter a strong password");
+      //   }
+      // }
     },
     age: {
       type: Number,
